@@ -1,88 +1,181 @@
-/**
- * main.h
- * Created on Aug, 23th 2023
- * Author: Tiago Barros
- * Based on "From C to C++ course - 2002"
-*/
-
+#include "keyboard.h"
+#include "screen.h"
+#include "timer.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include "screen.h"
-#include "keyboard.h"
-#include "timer.h"
+enum {
+  KEY_ESC = 27,
+  KEY_ENTER = 10,
+  ARROW_UP = 119,
+  ARROW_DOWN = 115,
+  ARROW_LEFT = 97,
+  ARROW_RIGHT = 100
+};
 
-int x = 34, y = 12;
+struct Snakenode {
+  int Nodex;
+  int Nodey;
+  struct Snakenode *next;
+};
+
+void printKey(int ch);
+void printGameOver();
+void AdicionarSnake(struct Snakenode **head, int x, int y);
+void printSnake(struct Snakenode *head);
+void LimparSnake(struct Snakenode *head);
+void FreeSnake(struct Snakenode **head);
+void MoveSnake(struct Snakenode **head, int x, int y);
+
+
 int incX = 1, incY = 1;
 
-void printHello(int nextX, int nextY)
-{
-    screenSetColor(CYAN, DARKGRAY);
-    screenGotoxy(x, y);
-    printf("           ");
-    x = nextX;
-    y = nextY;
-    screenGotoxy(x, y);
-    printf("Hello World");
-}
+int main() {
+  struct Snakenode *head = NULL;
+  static int ch = 0;
+  int dirX = 1, dirY = 0; // Inicialmente movendo para a direita
+  screenInit(1);
+  keyboardInit();
+  timerInit(50);
 
-void printKey(int ch)
-{
-    screenSetColor(YELLOW, DARKGRAY);
-    screenGotoxy(35, 22);
-    printf("Key code :");
+  AdicionarSnake(&head, 34, 12);
+  screenUpdate();
 
-    screenGotoxy(34, 23);
-    printf("            ");
-    
-    if (ch == 27) screenGotoxy(36, 23);
-    else screenGotoxy(39, 23);
-
-    printf("%d ", ch);
-    while (keyhit())
-    {
-        printf("%d ", readch());
-    }
-}
-
-int main() 
-{
-    static int ch = 0;
-
-    screenInit(1);
-    keyboardInit();
-    timerInit(50);
-
-    printHello(x, y);
-    screenUpdate();
-
-    while (ch != 10) //enter
-    {
-        // Handle user input
-        if (keyhit()) 
-        {
-            ch = readch();
-            printKey(ch);
-            screenUpdate();
-        }
-
-        // Update game state (move elements, verify collision, etc)
-        if (timerTimeOver() == 1)
-        {
-            int newX = x + incX;
-            if (newX >= (MAXX -strlen("Hello World") -1) || newX <= MINX+1) incX = -incX;
-            int newY = y + incY;
-            if (newY >= MAXY-1 || newY <= MINY+1) incY = -incY;
-
-            printKey(ch);
-            printHello(newX, newY);
-
-            screenUpdate();
-        }
+  while (ch != KEY_ESC) {
+    if (keyhit()) {
+      ch = readch();
+      // Atualizar direção com base na tecla de seta
+      switch (ch) {
+      case ARROW_UP:
+        dirX = 0;
+        dirY = -1;
+        break;
+      case ARROW_DOWN:
+        dirX = 0;
+        dirY = 1;
+        break;
+      case ARROW_LEFT:
+        dirX = -1;
+        dirY = 0;
+        break;
+      case ARROW_RIGHT:
+        dirX = 1;
+        dirY = 0;
+        break;
+      }
+      printKey(ch);
+      screenUpdate();
     }
 
-    keyboardDestroy();
-    screenDestroy();
-    timerDestroy();
+      if (timerTimeOver() == 1) {
+        int newX = head->Nodex + dirX;
+        int newY = head->Nodey + dirY;
 
-    return 0;
+        // Verifica colisão
+        if (newX >= (MAXX - strlen("Snake") - 1) || newX <= MINX + 1 ||
+            newY >= MAXY - 1 || newY <= MINY + 1) {
+          break; // Colisão com a parede
+        }
+
+        // Mover a cobra
+        MoveSnake(&head, newX, newY);
+        LimparSnake(head); // Limpa a posição anterior
+        printSnake(head); // Desenha a cobra na nova posição
+        screenUpdate();
+      }
+  }
+
+  FreeSnake(&head);
+  keyboardDestroy();
+  screenDestroy();
+  printGameOver();
+  timerDestroy();
+
+  return 0;
+}
+
+void printGameOver() {
+  screenSetColor(YELLOW, DARKGRAY);
+  screenGotoxy(30, 10);
+  printf("Game over!");
+}
+
+void printKey(int ch) {
+  screenSetColor(YELLOW, DARKGRAY);
+  screenGotoxy(35, 22);
+  printf("Key code :");
+
+  screenGotoxy(34, 23);
+  printf("            ");
+
+  if (ch == 10)
+    screenGotoxy(36, 23);
+  else
+    screenGotoxy(39, 23);
+
+  printf("%d ", ch);
+  while (keyhit()) {
+    printf("%d ", readch());
+  }
+}
+
+void AdicionarSnake(struct Snakenode **head, int x, int y) {
+  if (*head == NULL) {
+    *head = (struct Snakenode *)malloc(sizeof(struct Snakenode));
+    (*head)->Nodex = x;
+    (*head)->Nodey = y;
+    (*head)->next = NULL;
+  } else {
+    struct Snakenode *n = *head;
+    struct Snakenode *novo =
+        (struct Snakenode *)malloc(sizeof(struct Snakenode));
+    novo->Nodex = x;
+    novo->Nodey = y;
+    while (n->next != NULL) {
+      n = n->next;
+    }
+    novo->next = NULL;
+    n->next = novo;
+  }
+}
+
+void printSnake(struct Snakenode *head) {
+  struct Snakenode *n = head;
+  while (n != NULL) {
+    screenSetColor(GREEN, DARKGRAY);
+    screenGotoxy(n->Nodex, n->Nodey);
+    printf("X");
+    n = n->next;
+  }
+}
+
+void LimparSnake(struct Snakenode *head) {
+  struct Snakenode *n = head;
+  while (n != NULL) {
+    screenGotoxy(n->Nodex, n->Nodey);
+    printf(" ");
+    n = n->next;
+  }
+}
+
+void FreeSnake(struct Snakenode **head) {
+  struct Snakenode *n = *head;
+  while (n != NULL) {
+    struct Snakenode *temp = n;
+    n = n->next;
+    free(temp);
+  }
+  free(*head);
+}
+
+void MoveSnake(struct Snakenode **head, int x, int y) {
+  struct Snakenode *temp = *head;
+  while(temp->next != NULL) {
+    temp = temp->next;
+  }
+  temp->Nodex = (*head)->Nodex;
+  temp->Nodey = (*head)->Nodey;
+  (*head)->Nodex = x;
+  (*head)->Nodey = y;
 }
