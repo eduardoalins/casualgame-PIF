@@ -10,7 +10,7 @@ enum {
   KEY_ENTER = 10,
   ARROW_UP = 119,
   ARROW_DOWN = 115,
-  ARROW_LEFT = 97,
+  ARROW_LEFT = 97, //
   ARROW_RIGHT = 100
 };
 
@@ -27,7 +27,6 @@ void printSnake(struct Snakenode *head);
 void LimparSnake(struct Snakenode *head);
 void FreeSnake(struct Snakenode **head);
 void MoveSnake(struct Snakenode **head, int x, int y);
-
 
 int incX = 1, incY = 1;
 
@@ -68,22 +67,22 @@ int main() {
       screenUpdate();
     }
 
-      if (timerTimeOver() == 1) {
-        int newX = head->Nodex + dirX;
-        int newY = head->Nodey + dirY;
+    if (timerTimeOver() == 1) {
+      int newX = head->Nodex + dirX;
+      int newY = head->Nodey + dirY;
 
-        // Verifica colisão
-        if (newX >= (MAXX - strlen("Snake") - 1) || newX <= MINX + 1 ||
-            newY >= MAXY - 1 || newY <= MINY + 1) {
-          break; // Colisão com a parede
-        }
-
-        // Mover a cobra
-        MoveSnake(&head, newX, newY);
-        LimparSnake(head); // Limpa a posição anterior
-        printSnake(head); // Desenha a cobra na nova posição
-        screenUpdate();
+      // Verifica colisão
+      if (newX >= (MAXX - strlen("Snake") - 1) || newX <= MINX + 1 ||
+          newY >= MAXY - 1 || newY <= MINY + 1) {
+        break; // Colisão com a parede
       }
+
+      // Mover a cobra
+      LimparSnake(head); // Limpa a posição anterior
+      MoveSnake(&head, newX, newY);
+      printSnake(head);  // Desenha a cobra na nova posição
+      screenUpdate();
+    }
   }
 
   FreeSnake(&head);
@@ -171,7 +170,7 @@ void FreeSnake(struct Snakenode **head) {
 
 void MoveSnake(struct Snakenode **head, int x, int y) {
   struct Snakenode *temp = *head;
-  while(temp->next != NULL) {
+  while (temp->next != NULL) {
     temp = temp->next;
   }
   temp->Nodex = (*head)->Nodex;
