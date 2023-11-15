@@ -27,6 +27,7 @@ void printSnake(struct Snakenode *head);
 void LimparSnake(struct Snakenode *head);
 void FreeSnake(struct Snakenode **head);
 void MoveSnake(struct Snakenode **head, int x, int y);
+void PrintMaca(int x, int y);
 
 int incX = 1, incY = 1;
 
@@ -39,6 +40,7 @@ int main() {
   timerInit(50);
 
   AdicionarSnake(&head, 34, 12);
+  PrintMaca(12, 6);
   screenUpdate();
 
   while (ch != KEY_ESC) {
@@ -49,7 +51,6 @@ int main() {
       case ARROW_UP:
         dirX = 0;
         dirY = -1;
-        AdicionarSnake(&head, 34, 12);
         break;
       case ARROW_DOWN:
         dirX = 0;
@@ -68,7 +69,7 @@ int main() {
       screenUpdate();
     }
 
-    if (timerTimeOver() == 1) {
+     if (timerTimeOver() == 1) {
       int newX = head->Nodex + dirX;
       int newY = head->Nodey + dirY;
 
@@ -77,6 +78,11 @@ int main() {
           newY >= MAXY - 1 || newY <= MINY + 1) {
         break; // Colisão com a parede
       }
+
+      if(newX == 12 && newY == 6){
+        AdicionarSnake(&head, 12, 6);
+      }
+        
 
       // Mover a cobra
       LimparSnake(head); // Limpa a posição anterior
@@ -128,7 +134,8 @@ void AdicionarSnake(struct Snakenode **head, int x, int y) {
     (*head)->next = NULL;
   } else {
     struct Snakenode *n = *head;
-    struct Snakenode *novo = (struct Snakenode *)malloc(sizeof(struct Snakenode));
+    struct Snakenode *novo =
+        (struct Snakenode *)malloc(sizeof(struct Snakenode));
     novo->Nodex = x;
     novo->Nodey = y;
     while (n->next != NULL) {
@@ -169,7 +176,8 @@ void FreeSnake(struct Snakenode **head) {
 }
 
 void MoveSnake(struct Snakenode **head, int x, int y) {
-  struct Snakenode *newHead = (struct Snakenode *)malloc(sizeof(struct Snakenode));
+  struct Snakenode *newHead =
+      (struct Snakenode *)malloc(sizeof(struct Snakenode));
   if (newHead == NULL) {
     // Tratamento de erro, se a alocação de memória falhar
     exit(1);
@@ -188,4 +196,10 @@ void MoveSnake(struct Snakenode **head, int x, int y) {
 
   free(temp->next);
   temp->next = NULL;
+}
+
+void PrintMaca(int x, int y) {
+  screenSetColor(RED, DARKGRAY);
+  screenGotoxy(x, y);
+  printf("0");
 }
