@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 enum {
   KEY_ESC = 27,
@@ -40,7 +41,9 @@ int main() {
   timerInit(50);
 
   AdicionarSnake(&head, 34, 12);
-  PrintMaca(12, 6);
+  srand((unsigned int)time(NULL));
+  int PosMacaX = rand() % 76 + 4, PosMacaY = rand() % 16 + 4;
+  PrintMaca(PosMacaX, PosMacaY);
   screenUpdate();
 
   while (ch != KEY_ESC) {
@@ -69,7 +72,7 @@ int main() {
       screenUpdate();
     }
 
-     if (timerTimeOver() == 1) {
+    if (timerTimeOver() == 1) {
       int newX = head->Nodex + dirX;
       int newY = head->Nodey + dirY;
 
@@ -79,10 +82,9 @@ int main() {
         break; // Colisão com a parede
       }
 
-      if(newX == 12 && newY == 6){
-        AdicionarSnake(&head, 12, 6);
+      if (newX == PosMacaX && newY == PosMacaY) {
+        AdicionarSnake(&head, PosMacaX, PosMacaY);
       }
-        
 
       // Mover a cobra
       LimparSnake(head); // Limpa a posição anterior
