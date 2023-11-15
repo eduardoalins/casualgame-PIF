@@ -10,7 +10,7 @@ enum {
   KEY_ENTER = 10,
   ARROW_UP = 119,
   ARROW_DOWN = 115,
-  ARROW_LEFT = 97, //
+  ARROW_LEFT = 97,
   ARROW_RIGHT = 100
 };
 
@@ -49,6 +49,7 @@ int main() {
       case ARROW_UP:
         dirX = 0;
         dirY = -1;
+        AdicionarSnake(&head, 34, 12);
         break;
       case ARROW_DOWN:
         dirX = 0;
@@ -80,7 +81,7 @@ int main() {
       // Mover a cobra
       LimparSnake(head); // Limpa a posição anterior
       MoveSnake(&head, newX, newY);
-      printSnake(head);  // Desenha a cobra na nova posição
+      printSnake(head); // Desenha a cobra na nova posição
       screenUpdate();
     }
   }
@@ -127,8 +128,7 @@ void AdicionarSnake(struct Snakenode **head, int x, int y) {
     (*head)->next = NULL;
   } else {
     struct Snakenode *n = *head;
-    struct Snakenode *novo =
-        (struct Snakenode *)malloc(sizeof(struct Snakenode));
+    struct Snakenode *novo = (struct Snakenode *)malloc(sizeof(struct Snakenode));
     novo->Nodex = x;
     novo->Nodey = y;
     while (n->next != NULL) {
@@ -169,12 +169,23 @@ void FreeSnake(struct Snakenode **head) {
 }
 
 void MoveSnake(struct Snakenode **head, int x, int y) {
+  struct Snakenode *newHead = (struct Snakenode *)malloc(sizeof(struct Snakenode));
+  if (newHead == NULL) {
+    // Tratamento de erro, se a alocação de memória falhar
+    exit(1);
+  }
+
+  newHead->Nodex = x;
+  newHead->Nodey = y;
+  newHead->next = *head;
+  *head = newHead;
+
+  // Remover a última parte da cauda
   struct Snakenode *temp = *head;
-  while (temp->next != NULL) {
+  while (temp->next->next != NULL) {
     temp = temp->next;
   }
-  temp->Nodex = (*head)->Nodex;
-  temp->Nodey = (*head)->Nodey;
-  (*head)->Nodex = x;
-  (*head)->Nodey = y;
+
+  free(temp->next);
+  temp->next = NULL;
 }
