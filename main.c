@@ -29,6 +29,7 @@ void LimparSnake(struct Snakenode *head);
 void FreeSnake(struct Snakenode **head);
 void MoveSnake(struct Snakenode **head, int x, int y);
 void PrintMaca(int x, int y);
+int ColisaoCorpo(struct Snakenode *head, int x, int y);
 
 int incX = 1, incY = 1;
 
@@ -80,6 +81,10 @@ int main() {
       if (newX >= (MAXX - strlen("Snake") - 1) || newX <= MINX + 1 ||
           newY >= MAXY - 1 || newY <= MINY + 1) {
         break; // Colisão com a parede
+      }
+      
+      if (ColisaoCorpo(head, newX, newY) == 1) {
+          break; // Colisão com o próprio corpo
       }
 
       if (newX == PosMacaX && newY == PosMacaY) {
@@ -174,7 +179,6 @@ void FreeSnake(struct Snakenode **head) {
     n = n->next;
     free(temp);
   }
-  free(*head);
 }
 
 void MoveSnake(struct Snakenode **head, int x, int y) {
@@ -204,4 +208,15 @@ void PrintMaca(int x, int y) {
   screenSetColor(RED, DARKGRAY);
   screenGotoxy(x, y);
   printf("0");
+}
+
+int ColisaoCorpo(struct Snakenode *head, int x, int y) {
+  struct Snakenode *n = head;
+  while (n != NULL) {
+    if (n->Nodex == x && n->Nodey == y) {
+      return 1;  // Colisão com o corpo
+    }
+    n = n->next;
+  }
+  return 0;  // Sem colisão
 }
