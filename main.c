@@ -30,6 +30,7 @@ void FreeSnake(struct Snakenode **head);
 void MoveSnake(struct Snakenode **head, int x, int y);
 void PrintMaca(int x, int y);
 int ColisaoCorpo(struct Snakenode *head, int x, int y);
+void ProxMaca(int *x, int *y);
 
 int incX = 1, incY = 1;
 
@@ -53,20 +54,28 @@ int main() {
       // Atualizar direção com base na tecla de seta
       switch (ch) {
       case ARROW_UP:
-        dirX = 0;
-        dirY = -1;
+        if (dirY != 1) {
+          dirX = 0;
+          dirY = -1;
+        }
         break;
       case ARROW_DOWN:
-        dirX = 0;
-        dirY = 1;
+        if (dirY != -1) {
+          dirX = 0;
+          dirY = 1;
+        }
         break;
       case ARROW_LEFT:
-        dirX = -1;
-        dirY = 0;
+        if (dirX != 1) {
+          dirX = -1;
+          dirY = 0;
+        }
         break;
       case ARROW_RIGHT:
-        dirX = 1;
-        dirY = 0;
+        if (dirX != -1) {
+          dirX = 1;
+          dirY = 0;
+        }
         break;
       }
       printKey(ch);
@@ -82,13 +91,15 @@ int main() {
           newY >= MAXY - 1 || newY <= MINY + 1) {
         break; // Colisão com a parede
       }
-      
+
       if (ColisaoCorpo(head, newX, newY) == 1) {
-          break; // Colisão com o próprio corpo
+        break; // Colisão com o próprio corpo
       }
 
       if (newX == PosMacaX && newY == PosMacaY) {
         AdicionarSnake(&head, PosMacaX, PosMacaY);
+        ProxMaca(&PosMacaX, &PosMacaY);
+        PrintMaca(PosMacaX, PosMacaY);
       }
 
       // Mover a cobra
@@ -214,9 +225,14 @@ int ColisaoCorpo(struct Snakenode *head, int x, int y) {
   struct Snakenode *n = head;
   while (n != NULL) {
     if (n->Nodex == x && n->Nodey == y) {
-      return 1;  // Colisão com o corpo
+      return 1; // Colisão com o corpo
     }
     n = n->next;
   }
-  return 0;  // Sem colisão
+  return 0; // Sem colisão
+}
+
+void ProxMaca(int *x, int *y) {
+  *x = rand() % 76 + 4;
+  *y = rand() % 13 + 4;
 }
