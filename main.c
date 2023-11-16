@@ -44,7 +44,7 @@ int main() {
 
   AdicionarSnake(&head, 34, 12);
   srand((unsigned int)time(NULL));
-  int PosMacaX = rand() % 76 + 4, PosMacaY = rand() % 16 + 4;
+  int PosMacaX = rand() % 68 + 8, PosMacaY = rand() % 16 + 4;
   PrintMaca(PosMacaX, PosMacaY);
   screenUpdate();
 
@@ -87,8 +87,8 @@ int main() {
       int newY = head->Nodey + dirY;
 
       // Verifica colisão
-      if (newX >= (MAXX - strlen("Snake") - 1) || newX <= MINX + 1 ||
-          newY >= MAXY - 1 || newY <= MINY + 1) {
+      if (newX >= (MAXX ) || newX <= MINX || newY >= MAXY ||
+          newY <= MINY) {
         break; // Colisão com a parede
       }
 
@@ -232,6 +232,6 @@ int ColisaoCorpo(struct Snakenode *head, int x, int y) {
 }
 
 void ProxMaca(int *x, int *y) {
-  *x = rand() % 76 + 4;
-  *y = rand() % 13 + 4;
+  *x = rand() % 68 + 8;
+  *y = rand() % 16 + 4;
 }
