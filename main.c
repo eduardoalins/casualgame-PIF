@@ -112,7 +112,6 @@ int main() {
 
   FreeSnake(&head);
   keyboardDestroy();
-  screenDestroy();
   printGameOver();
   timerDestroy();
 
