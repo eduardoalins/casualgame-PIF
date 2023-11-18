@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 enum {
   KEY_ESC = 27,
@@ -55,7 +56,7 @@ int main() {
   int dirX = 1, dirY = 0; // Inicialmente movendo para a direita
   FILE *fptr;
   struct Jogador player;
-  printf("O jogo começará assim que digitar seu nick!\n");
+  printf("O jogo começará 3 segundos depois que digitar seu nick!\n");
   printf("Digite sua sigla de 3 letras: ");
   scanf("%s", player.Nome);
 
@@ -68,6 +69,8 @@ int main() {
   int PosMacaX = rand() % 68 + 8, PosMacaY = rand() % 16 + 4;
   PrintMaca(PosMacaX, PosMacaY);
   screenUpdate();
+
+  sleep(3);
 
   while (ch != KEY_ESC) {
     if (keyhit()) {
