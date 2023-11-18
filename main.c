@@ -21,6 +21,16 @@ struct Snakenode {
   struct Snakenode *next;
 };
 
+struct Jogador {
+  char Nome[4];
+  int pont;
+};
+
+struct Highscore {
+  struct Jogador jogador;
+  struct Highscore *next;
+};
+
 void printPlacar(int placar);
 void printGameOver();
 void AdicionarSnake(struct Snakenode **head, int x, int y);
@@ -31,6 +41,10 @@ void MoveSnake(struct Snakenode **head, int x, int y);
 void PrintMaca(int x, int y);
 int ColisaoCorpo(struct Snakenode *head, int x, int y);
 void ProxMaca(int *x, int *y);
+void OrdenarLista(struct Highscore **cabeca, struct Jogador nick);
+void EscreverLista(struct Highscore *cabeca, FILE *fptr);
+void PrintarLista(struct Highscore *cabeca);
+void FreeLista(struct Highscore **head);
 
 int incX = 1, incY = 1;
 
@@ -39,6 +53,12 @@ int main() {
   static int ch = 0;
   int placar = 0;
   int dirX = 1, dirY = 0; // Inicialmente movendo para a direita
+  FILE *fptr;
+  struct Jogador player;
+  printf("O jogo começará assim que digitar seu nick!\n");
+  printf("Digite sua sigla de 3 letras: ");
+  scanf("%s", player.Nome);
+
   screenInit(1);
   keyboardInit();
   timerInit(50);
@@ -112,6 +132,22 @@ int main() {
 
   FreeSnake(&head);
   keyboardDestroy();
+  screenDestroy();
+  player.pont = placar;
+  fptr = (fopen("placar.txt", "a")); // começo placar
+  fwrite(&player, sizeof(struct Jogador), 1, fptr);
+  fclose(fptr);
+  struct Highscore *lista = NULL;
+  fptr = (fopen("placar.txt", "r"));
+  while (fread(&player, sizeof(struct Jogador), 1, fptr) == 1) {
+    OrdenarLista(&lista, player);
+  }
+  fclose(fptr);
+  fptr = (fopen("placar.txt", "w"));
+  EscreverLista(lista, fptr);
+  fclose(fptr);
+  PrintarLista(lista);
+  FreeLista(&lista); // fim do placar
   printGameOver();
   timerDestroy();
 
@@ -226,4 +262,64 @@ int ColisaoCorpo(struct Snakenode *head, int x, int y) {
 void ProxMaca(int *x, int *y) {
   *x = rand() % 68 + 8;
   *y = rand() % 16 + 4;
+}
+
+void OrdenarLista(struct Highscore **cabeca, struct Jogador nick) {
+  if (*cabeca == NULL) {
+    *cabeca = (struct Highscore *)malloc(sizeof(struct Highscore));
+    (*cabeca)->jogador = nick;
+    (*cabeca)->next = NULL;
+  } else {
+    struct Highscore *n = *cabeca;
+    struct Highscore *novo =
+        (struct Highscore *)malloc(sizeof(struct Highscore));
+    novo->jogador = nick;
+    while (n->next != NULL && nick.pont < novo->next->jogador.pont) {
+      n = n->next;
+    }
+    if (nick.pont > (*cabeca)->jogador.pont) {
+      novo->next = *cabeca;
+      *cabeca = novo;
+    } else if (n->next == NULL) {
+      novo->next = NULL;
+      n->next = novo;
+    } else {
+      novo->next = n->next;
+      n->next = novo;
+    }
+  }
+}
+
+void EscreverLista(struct Highscore *cabeca, FILE *fptr) {
+  struct Highscore *n = cabeca;
+  struct Jogador Ojogador;
+  while (n != NULL) {
+    Ojogador = n->jogador;
+    if (fwrite(&Ojogador, sizeof(struct Jogador), 1, fptr) != 1) {
+      break;
+    }
+    n = n->next;
+  }
+}
+
+void PrintarLista(struct Highscore *cabeca) {
+  struct Highscore *n = cabeca;
+  struct Jogador Ojogador;
+  int i = 1;
+  while (n != NULL && (i < 4)) {
+    printf("%d colocado!:\n", i);
+    printf("Nome: %s\n", n->jogador.Nome);
+    printf("Pontuação: %d\n", n->jogador.pont);
+    n = n->next;
+    i++;
+  }
+}
+
+void FreeLista(struct Highscore **head) {
+  struct Highscore *n = *head;
+  while (n != NULL) {
+    struct Highscore *temp = n;
+    n = n->next;
+    free(temp);
+  }
 }
