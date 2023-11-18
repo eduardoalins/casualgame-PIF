@@ -21,7 +21,7 @@ struct Snakenode {
   struct Snakenode *next;
 };
 
-void printKey(int ch);
+void printPlacar(int placar);
 void printGameOver();
 void AdicionarSnake(struct Snakenode **head, int x, int y);
 void printSnake(struct Snakenode *head);
@@ -37,6 +37,7 @@ int incX = 1, incY = 1;
 int main() {
   struct Snakenode *head = NULL;
   static int ch = 0;
+  int placar = 0;
   int dirX = 1, dirY = 0; // Inicialmente movendo para a direita
   screenInit(1);
   keyboardInit();
@@ -78,7 +79,6 @@ int main() {
         }
         break;
       }
-      printKey(ch);
       screenUpdate();
     }
 
@@ -87,8 +87,7 @@ int main() {
       int newY = head->Nodey + dirY;
 
       // Verifica colisão
-      if (newX >= (MAXX ) || newX <= MINX || newY >= MAXY ||
-          newY <= MINY) {
+      if (newX >= (MAXX) || newX <= MINX || newY >= MAXY || newY <= MINY) {
         break; // Colisão com a parede
       }
 
@@ -100,8 +99,9 @@ int main() {
         AdicionarSnake(&head, PosMacaX, PosMacaY);
         ProxMaca(&PosMacaX, &PosMacaY);
         PrintMaca(PosMacaX, PosMacaY);
+        placar++;
       }
-
+      printPlacar(placar);
       // Mover a cobra
       LimparSnake(head); // Limpa a posição anterior
       MoveSnake(&head, newX, newY);
@@ -124,23 +124,14 @@ void printGameOver() {
   printf("Game over!");
 }
 
-void printKey(int ch) {
+void printPlacar(int placar) {
   screenSetColor(YELLOW, DARKGRAY);
   screenGotoxy(35, 22);
-  printf("Key code :");
+  printf("Placar :");
 
   screenGotoxy(34, 23);
-  printf("            ");
-
-  if (ch == 10)
-    screenGotoxy(36, 23);
-  else
-    screenGotoxy(39, 23);
-
-  printf("%d ", ch);
-  while (keyhit()) {
-    printf("%d ", readch());
-  }
+  printf("     ");
+  printf("%d", placar);
 }
 
 void AdicionarSnake(struct Snakenode **head, int x, int y) {
