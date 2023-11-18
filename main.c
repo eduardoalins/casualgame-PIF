@@ -130,7 +130,8 @@ void printPlacar(int placar) {
   printf("Placar :");
 
   screenGotoxy(34, 23);
-  printf("     ");
+  printf("       ");
+  screenGotoxy(39, 23);
   printf("%d", placar);
 }
 
