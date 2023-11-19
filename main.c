@@ -274,10 +274,9 @@ void OrdenarLista(struct Highscore **cabeca, struct Jogador nick) {
     (*cabeca)->next = NULL;
   } else {
     struct Highscore *n = *cabeca;
-    struct Highscore *novo =
-        (struct Highscore *)malloc(sizeof(struct Highscore));
+    struct Highscore *novo = (struct Highscore *)malloc(sizeof(struct Highscore));
     novo->jogador = nick;
-    while (n->next != NULL && nick.pont < novo->next->jogador.pont) {
+    while (n->next != NULL && nick.pont < n->next->jogador.pont) {
       n = n->next;
     }
     if (nick.pont > (*cabeca)->jogador.pont) {
