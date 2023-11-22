@@ -16,7 +16,9 @@ A seguir, digitr essa segunda linha:
 **COMO JOGAR:**
 
 -Assim que código executar você vai precisar digitar o seu nick (é uma sigla que possui 3 caracteres), o seu nick irá aparecer na scoreboard se você estiver entre os jogadores com as maiores pontuações.
+
 -Logo após isso o jogo iniciará automaticamente, você irá conseguir mexer a cobra usando o W (para cima), A (para a esquerda), S (para baixo) e D (para a direita)
+
 -A cobra é um "X" verde e as maçãs são "0"s vermelhos.
 
 **-OBJETIVO:**
