@@ -16,10 +16,10 @@ COMO JOGAR:
 -Logo após isso o jogo iniciará automaticamente, você irá conseguir mexer a cobra usando o W (para cima), A (para a esquerda), S (para baixo) e D (para a direita)
 -A cobra é um "X" verde e as maçãs são "0"s vermelhos.
 
--OBJETIVO: 
+OBJETIVO: 
 -controlar a cobra e comer o maior número de maçãs possivel sem morrer.
 -A cada maçã que a cobra come você ganha 1 ponto.
 
--COMO A COBRA PODE MORRER:
+COMO A COBRA PODE MORRER:
 -Se a cobra colidir com a parede ou com o próprio corpo ela morrerá.
 -Quando a cobre morrer irá aparecer "Game over" e apareçerá a tabela de pontuações, mostrando quem obteve as maiores pontuações.
