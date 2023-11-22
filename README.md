@@ -3,12 +3,15 @@ Projeto da cadeira de Programação Imperativa Funcional (PIF) do segundo perío
 **COMO RODAR SNAKE GAME**
 
 -Primeiramente é preciso que você verifique se oS arquivo que estão no Github estão diretório da máquina. Depois disso utilize a seguinte linha de código:
-
-```gcc –o snakegame main.c keyboard.c screen.c timer.c```
+```
+gcc –o snakegame main.c keyboard.c screen.c timer.c
+```
 
 A seguir, digitr essa segunda linha:
 
-```./snakegame```
+```
+./snakegame
+```
 
 **COMO JOGAR:**
 
